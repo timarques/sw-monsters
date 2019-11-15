@@ -1,0 +1,651 @@
+[{
+	"name": "Testeakflg",
+	"family": "Gargoyle",
+	"icon": "kunite.png",
+	"stars": 4,
+	"element": "fire",
+	"awaken": {
+		"bonus": "Fire HP Leader",
+		"essences": [{
+			"type": "fire",
+			"quantity": 20,
+			"level": "mid"
+		}, {
+			"type": "fire",
+			"quantity": 10,
+			"level": "high"
+		}, {
+			"type": "magic",
+			"quantity": 15,
+			"level": "mid"
+		}, {
+			"type": "magic",
+			"quantity": 5,
+			"level": "high"
+		}]
+	},
+	"skills": [{
+		"name": "HP 40% Fire",
+		"type": "leader",
+		"description": "Increases the HP of ally monsters with Fire attribute by 40%.",
+		"multiplier": null,
+		"icon": "fire-hp-leader.png",
+		"skillups": []
+	}, {
+		"name": "Stone Claws",
+		"type": "skill",
+		"description": "Attacks the enemy to inflict damage that increases according to your Defense and increases your Defense by 20%. (Accumulates up to 5 times)",
+		"multiplier": "180%+260%",
+		"icon": "fire-gargoyle-stone-claws.png",
+		"skillups": [
+			"Damage +5%",
+			"Damage +5%",
+			"Damage +5%",
+			"Damage +5%",
+			"Damage +10%",
+			"Damage +10%"
+		]
+	}, {
+		"name": "Destructive Claws",
+		"type": "skill",
+		"description": "Inflicts damage on the enemy in proportion to your Defense and destroys the target's HP by the amount of damage dealt. Afterwards, you will be turned into a statue until the next turn starts. While you are a statue, you won't be able to move. But you will gain immunity against inability effects, receive 30% less damage and recover your HP by 10% until the statue state is gone. (Reusable in 5 turns)",
+		"multiplier": null,
+		"icon": "fire-gargoyle-destructive-claws.png",
+		"skillups": [
+			"Cooltime Turn -1",
+			"Cooltime Turn -1"
+		]
+	}, {
+		"name": "State of Protection",
+		"type": "passive",
+		"description": "If your turn ends with full HP, you will be turned into a statue until the next turn starts. The damage dealt on allies will be reduced gradually if the ally gets attacked with multiple hits when you are turned into a statue. [Automatic Effect]",
+		"multiplier": null,
+		"icon": "fire-gargoyle-state-of-protection.png",
+		"skillups": []
+	}]
+},{
+	"name": "Kunite",
+	"family": "Gargoyle",
+	"icon": "kunite.png",
+	"stars": 4,
+	"element": "fire",
+	"awaken": {
+		"bonus": "Fire HP Leader",
+		"essences": [{
+			"type": "fire",
+			"quantity": 20,
+			"level": "mid"
+		}, {
+			"type": "fire",
+			"quantity": 10,
+			"level": "high"
+		}, {
+			"type": "magic",
+			"quantity": 15,
+			"level": "mid"
+		}, {
+			"type": "magic",
+			"quantity": 5,
+			"level": "high"
+		}]
+	},
+	"skills": [{
+		"name": "HP 40% Fire",
+		"type": "leader",
+		"description": "Increases the HP of ally monsters with Fire attribute by 40%.",
+		"multiplier": null,
+		"icon": "fire-hp-leader.png",
+		"skillups": []
+	}, {
+		"name": "Stone Claws",
+		"type": "skill",
+		"description": "Attacks the enemy to inflict damage that increases according to your Defense and increases your Defense by 20%. (Accumulates up to 5 times)",
+		"multiplier": "180%+260%",
+		"icon": "fire-gargoyle-stone-claws.png",
+		"skillups": [
+			"Damage +5%",
+			"Damage +5%",
+			"Damage +5%",
+			"Damage +5%",
+			"Damage +10%",
+			"Damage +10%"
+		]
+	}, {
+		"name": "Destructive Claws",
+		"type": "skill",
+		"description": "Inflicts damage on the enemy in proportion to your Defense and destroys the target's HP by the amount of damage dealt. Afterwards, you will be turned into a statue until the next turn starts. While you are a statue, you won't be able to move. But you will gain immunity against inability effects, receive 30% less damage and recover your HP by 10% until the statue state is gone. (Reusable in 5 turns)",
+		"multiplier": null,
+		"icon": "fire-gargoyle-destructive-claws.png",
+		"skillups": [
+			"Cooltime Turn -1",
+			"Cooltime Turn -1"
+		]
+	}, {
+		"name": "State of Protection",
+		"type": "passive",
+		"description": "If your turn ends with full HP, you will be turned into a statue until the next turn starts. The damage dealt on allies will be reduced gradually if the ally gets attacked with multiple hits when you are turned into a statue. [Automatic Effect]",
+		"multiplier": null,
+		"icon": "fire-gargoyle-state-of-protection.png",
+		"skillups": []
+	}]
+},{
+	"name": "Kunite",
+	"family": "Gargoyle",
+	"icon": "kunite.png",
+	"stars": 4,
+	"element": "fire",
+	"awaken": {
+		"bonus": "Fire HP Leader",
+		"essences": [{
+			"type": "fire",
+			"quantity": 20,
+			"level": "mid"
+		}, {
+			"type": "fire",
+			"quantity": 10,
+			"level": "high"
+		}, {
+			"type": "magic",
+			"quantity": 15,
+			"level": "mid"
+		}, {
+			"type": "magic",
+			"quantity": 5,
+			"level": "high"
+		}]
+	},
+	"skills": [{
+		"name": "HP 40% Fire",
+		"type": "leader",
+		"description": "Increases the HP of ally monsters with Fire attribute by 40%.",
+		"multiplier": null,
+		"icon": "fire-hp-leader.png",
+		"skillups": []
+	}, {
+		"name": "Stone Claws",
+		"type": "skill",
+		"description": "Attacks the enemy to inflict damage that increases according to your Defense and increases your Defense by 20%. (Accumulates up to 5 times)",
+		"multiplier": "180%+260%",
+		"icon": "fire-gargoyle-stone-claws.png",
+		"skillups": [
+			"Damage +5%",
+			"Damage +5%",
+			"Damage +5%",
+			"Damage +5%",
+			"Damage +10%",
+			"Damage +10%"
+		]
+	}, {
+		"name": "Destructive Claws",
+		"type": "skill",
+		"description": "Inflicts damage on the enemy in proportion to your Defense and destroys the target's HP by the amount of damage dealt. Afterwards, you will be turned into a statue until the next turn starts. While you are a statue, you won't be able to move. But you will gain immunity against inability effects, receive 30% less damage and recover your HP by 10% until the statue state is gone. (Reusable in 5 turns)",
+		"multiplier": null,
+		"icon": "fire-gargoyle-destructive-claws.png",
+		"skillups": [
+			"Cooltime Turn -1",
+			"Cooltime Turn -1"
+		]
+	}, {
+		"name": "State of Protection",
+		"type": "passive",
+		"description": "If your turn ends with full HP, you will be turned into a statue until the next turn starts. The damage dealt on allies will be reduced gradually if the ally gets attacked with multiple hits when you are turned into a statue. [Automatic Effect]",
+		"multiplier": null,
+		"icon": "fire-gargoyle-state-of-protection.png",
+		"skillups": []
+	}]
+},{
+	"name": "Kunite",
+	"family": "Gargoyle",
+	"icon": "kunite.png",
+	"stars": 4,
+	"element": "fire",
+	"awaken": {
+		"bonus": "Fire HP Leader",
+		"essences": [{
+			"type": "fire",
+			"quantity": 20,
+			"level": "mid"
+		}, {
+			"type": "fire",
+			"quantity": 10,
+			"level": "high"
+		}, {
+			"type": "magic",
+			"quantity": 15,
+			"level": "mid"
+		}, {
+			"type": "magic",
+			"quantity": 5,
+			"level": "high"
+		}]
+	},
+	"skills": [{
+		"name": "HP 40% Fire",
+		"type": "leader",
+		"description": "Increases the HP of ally monsters with Fire attribute by 40%.",
+		"multiplier": null,
+		"icon": "fire-hp-leader.png",
+		"skillups": []
+	}, {
+		"name": "Stone Claws",
+		"type": "skill",
+		"description": "Attacks the enemy to inflict damage that increases according to your Defense and increases your Defense by 20%. (Accumulates up to 5 times)",
+		"multiplier": "180%+260%",
+		"icon": "fire-gargoyle-stone-claws.png",
+		"skillups": [
+			"Damage +5%",
+			"Damage +5%",
+			"Damage +5%",
+			"Damage +5%",
+			"Damage +10%",
+			"Damage +10%"
+		]
+	}, {
+		"name": "Destructive Claws",
+		"type": "skill",
+		"description": "Inflicts damage on the enemy in proportion to your Defense and destroys the target's HP by the amount of damage dealt. Afterwards, you will be turned into a statue until the next turn starts. While you are a statue, you won't be able to move. But you will gain immunity against inability effects, receive 30% less damage and recover your HP by 10% until the statue state is gone. (Reusable in 5 turns)",
+		"multiplier": null,
+		"icon": "fire-gargoyle-destructive-claws.png",
+		"skillups": [
+			"Cooltime Turn -1",
+			"Cooltime Turn -1"
+		]
+	}, {
+		"name": "State of Protection",
+		"type": "passive",
+		"description": "If your turn ends with full HP, you will be turned into a statue until the next turn starts. The damage dealt on allies will be reduced gradually if the ally gets attacked with multiple hits when you are turned into a statue. [Automatic Effect]",
+		"multiplier": null,
+		"icon": "fire-gargoyle-state-of-protection.png",
+		"skillups": []
+	}]
+},{
+	"name": "Kunite",
+	"family": "Gargoyle",
+	"icon": "kunite.png",
+	"stars": 4,
+	"element": "fire",
+	"awaken": {
+		"bonus": "Fire HP Leader",
+		"essences": [{
+			"type": "fire",
+			"quantity": 20,
+			"level": "mid"
+		}, {
+			"type": "fire",
+			"quantity": 10,
+			"level": "high"
+		}, {
+			"type": "magic",
+			"quantity": 15,
+			"level": "mid"
+		}, {
+			"type": "magic",
+			"quantity": 5,
+			"level": "high"
+		}]
+	},
+	"skills": [{
+		"name": "HP 40% Fire",
+		"type": "leader",
+		"description": "Increases the HP of ally monsters with Fire attribute by 40%.",
+		"multiplier": null,
+		"icon": "fire-hp-leader.png",
+		"skillups": []
+	}, {
+		"name": "Stone Claws",
+		"type": "skill",
+		"description": "Attacks the enemy to inflict damage that increases according to your Defense and increases your Defense by 20%. (Accumulates up to 5 times)",
+		"multiplier": "180%+260%",
+		"icon": "fire-gargoyle-stone-claws.png",
+		"skillups": [
+			"Damage +5%",
+			"Damage +5%",
+			"Damage +5%",
+			"Damage +5%",
+			"Damage +10%",
+			"Damage +10%"
+		]
+	}, {
+		"name": "Destructive Claws",
+		"type": "skill",
+		"description": "Inflicts damage on the enemy in proportion to your Defense and destroys the target's HP by the amount of damage dealt. Afterwards, you will be turned into a statue until the next turn starts. While you are a statue, you won't be able to move. But you will gain immunity against inability effects, receive 30% less damage and recover your HP by 10% until the statue state is gone. (Reusable in 5 turns)",
+		"multiplier": null,
+		"icon": "fire-gargoyle-destructive-claws.png",
+		"skillups": [
+			"Cooltime Turn -1",
+			"Cooltime Turn -1"
+		]
+	}, {
+		"name": "State of Protection",
+		"type": "passive",
+		"description": "If your turn ends with full HP, you will be turned into a statue until the next turn starts. The damage dealt on allies will be reduced gradually if the ally gets attacked with multiple hits when you are turned into a statue. [Automatic Effect]",
+		"multiplier": null,
+		"icon": "fire-gargoyle-state-of-protection.png",
+		"skillups": []
+	}]
+},{
+	"name": "Kunite",
+	"family": "Gargoyle",
+	"icon": "kunite.png",
+	"stars": 4,
+	"element": "fire",
+	"awaken": {
+		"bonus": "Fire HP Leader",
+		"essences": [{
+			"type": "fire",
+			"quantity": 20,
+			"level": "mid"
+		}, {
+			"type": "fire",
+			"quantity": 10,
+			"level": "high"
+		}, {
+			"type": "magic",
+			"quantity": 15,
+			"level": "mid"
+		}, {
+			"type": "magic",
+			"quantity": 5,
+			"level": "high"
+		}]
+	},
+	"skills": [{
+		"name": "HP 40% Fire",
+		"type": "leader",
+		"description": "Increases the HP of ally monsters with Fire attribute by 40%.",
+		"multiplier": null,
+		"icon": "fire-hp-leader.png",
+		"skillups": []
+	}, {
+		"name": "Stone Claws",
+		"type": "skill",
+		"description": "Attacks the enemy to inflict damage that increases according to your Defense and increases your Defense by 20%. (Accumulates up to 5 times)",
+		"multiplier": "180%+260%",
+		"icon": "fire-gargoyle-stone-claws.png",
+		"skillups": [
+			"Damage +5%",
+			"Damage +5%",
+			"Damage +5%",
+			"Damage +5%",
+			"Damage +10%",
+			"Damage +10%"
+		]
+	}, {
+		"name": "Destructive Claws",
+		"type": "skill",
+		"description": "Inflicts damage on the enemy in proportion to your Defense and destroys the target's HP by the amount of damage dealt. Afterwards, you will be turned into a statue until the next turn starts. While you are a statue, you won't be able to move. But you will gain immunity against inability effects, receive 30% less damage and recover your HP by 10% until the statue state is gone. (Reusable in 5 turns)",
+		"multiplier": null,
+		"icon": "fire-gargoyle-destructive-claws.png",
+		"skillups": [
+			"Cooltime Turn -1",
+			"Cooltime Turn -1"
+		]
+	}, {
+		"name": "State of Protection",
+		"type": "passive",
+		"description": "If your turn ends with full HP, you will be turned into a statue until the next turn starts. The damage dealt on allies will be reduced gradually if the ally gets attacked with multiple hits when you are turned into a statue. [Automatic Effect]",
+		"multiplier": null,
+		"icon": "fire-gargoyle-state-of-protection.png",
+		"skillups": []
+	}]
+},{
+	"name": "Kunite",
+	"family": "Gargoyle",
+	"icon": "kunite.png",
+	"stars": 4,
+	"element": "fire",
+	"awaken": {
+		"bonus": "Fire HP Leader",
+		"essences": [{
+			"type": "fire",
+			"quantity": 20,
+			"level": "mid"
+		}, {
+			"type": "fire",
+			"quantity": 10,
+			"level": "high"
+		}, {
+			"type": "magic",
+			"quantity": 15,
+			"level": "mid"
+		}, {
+			"type": "magic",
+			"quantity": 5,
+			"level": "high"
+		}]
+	},
+	"skills": [{
+		"name": "HP 40% Fire",
+		"type": "leader",
+		"description": "Increases the HP of ally monsters with Fire attribute by 40%.",
+		"multiplier": null,
+		"icon": "fire-hp-leader.png",
+		"skillups": []
+	}, {
+		"name": "Stone Claws",
+		"type": "skill",
+		"description": "Attacks the enemy to inflict damage that increases according to your Defense and increases your Defense by 20%. (Accumulates up to 5 times)",
+		"multiplier": "180%+260%",
+		"icon": "fire-gargoyle-stone-claws.png",
+		"skillups": [
+			"Damage +5%",
+			"Damage +5%",
+			"Damage +5%",
+			"Damage +5%",
+			"Damage +10%",
+			"Damage +10%"
+		]
+	}, {
+		"name": "Destructive Claws",
+		"type": "skill",
+		"description": "Inflicts damage on the enemy in proportion to your Defense and destroys the target's HP by the amount of damage dealt. Afterwards, you will be turned into a statue until the next turn starts. While you are a statue, you won't be able to move. But you will gain immunity against inability effects, receive 30% less damage and recover your HP by 10% until the statue state is gone. (Reusable in 5 turns)",
+		"multiplier": null,
+		"icon": "fire-gargoyle-destructive-claws.png",
+		"skillups": [
+			"Cooltime Turn -1",
+			"Cooltime Turn -1"
+		]
+	}, {
+		"name": "State of Protection",
+		"type": "passive",
+		"description": "If your turn ends with full HP, you will be turned into a statue until the next turn starts. The damage dealt on allies will be reduced gradually if the ally gets attacked with multiple hits when you are turned into a statue. [Automatic Effect]",
+		"multiplier": null,
+		"icon": "fire-gargoyle-state-of-protection.png",
+		"skillups": []
+	}]
+},{
+	"name": "Kunite",
+	"family": "Gargoyle",
+	"icon": "kunite.png",
+	"stars": 4,
+	"element": "fire",
+	"awaken": {
+		"bonus": "Fire HP Leader",
+		"essences": [{
+			"type": "fire",
+			"quantity": 20,
+			"level": "mid"
+		}, {
+			"type": "fire",
+			"quantity": 10,
+			"level": "high"
+		}, {
+			"type": "magic",
+			"quantity": 15,
+			"level": "mid"
+		}, {
+			"type": "magic",
+			"quantity": 5,
+			"level": "high"
+		}]
+	},
+	"skills": [{
+		"name": "HP 40% Fire",
+		"type": "leader",
+		"description": "Increases the HP of ally monsters with Fire attribute by 40%.",
+		"multiplier": null,
+		"icon": "fire-hp-leader.png",
+		"skillups": []
+	}, {
+		"name": "Stone Claws",
+		"type": "skill",
+		"description": "Attacks the enemy to inflict damage that increases according to your Defense and increases your Defense by 20%. (Accumulates up to 5 times)",
+		"multiplier": "180%+260%",
+		"icon": "fire-gargoyle-stone-claws.png",
+		"skillups": [
+			"Damage +5%",
+			"Damage +5%",
+			"Damage +5%",
+			"Damage +5%",
+			"Damage +10%",
+			"Damage +10%"
+		]
+	}, {
+		"name": "Destructive Claws",
+		"type": "skill",
+		"description": "Inflicts damage on the enemy in proportion to your Defense and destroys the target's HP by the amount of damage dealt. Afterwards, you will be turned into a statue until the next turn starts. While you are a statue, you won't be able to move. But you will gain immunity against inability effects, receive 30% less damage and recover your HP by 10% until the statue state is gone. (Reusable in 5 turns)",
+		"multiplier": null,
+		"icon": "fire-gargoyle-destructive-claws.png",
+		"skillups": [
+			"Cooltime Turn -1",
+			"Cooltime Turn -1"
+		]
+	}, {
+		"name": "State of Protection",
+		"type": "passive",
+		"description": "If your turn ends with full HP, you will be turned into a statue until the next turn starts. The damage dealt on allies will be reduced gradually if the ally gets attacked with multiple hits when you are turned into a statue. [Automatic Effect]",
+		"multiplier": null,
+		"icon": "fire-gargoyle-state-of-protection.png",
+		"skillups": []
+	}]
+},{
+	"name": "Kunite",
+	"family": "Gargoyle",
+	"icon": "kunite.png",
+	"stars": 4,
+	"element": "fire",
+	"awaken": {
+		"bonus": "Fire HP Leader",
+		"essences": [{
+			"type": "fire",
+			"quantity": 20,
+			"level": "mid"
+		}, {
+			"type": "fire",
+			"quantity": 10,
+			"level": "high"
+		}, {
+			"type": "magic",
+			"quantity": 15,
+			"level": "mid"
+		}, {
+			"type": "magic",
+			"quantity": 5,
+			"level": "high"
+		}]
+	},
+	"skills": [{
+		"name": "HP 40% Fire",
+		"type": "leader",
+		"description": "Increases the HP of ally monsters with Fire attribute by 40%.",
+		"multiplier": null,
+		"icon": "fire-hp-leader.png",
+		"skillups": []
+	}, {
+		"name": "Stone Claws",
+		"type": "skill",
+		"description": "Attacks the enemy to inflict damage that increases according to your Defense and increases your Defense by 20%. (Accumulates up to 5 times)",
+		"multiplier": "180%+260%",
+		"icon": "fire-gargoyle-stone-claws.png",
+		"skillups": [
+			"Damage +5%",
+			"Damage +5%",
+			"Damage +5%",
+			"Damage +5%",
+			"Damage +10%",
+			"Damage +10%"
+		]
+	}, {
+		"name": "Destructive Claws",
+		"type": "skill",
+		"description": "Inflicts damage on the enemy in proportion to your Defense and destroys the target's HP by the amount of damage dealt. Afterwards, you will be turned into a statue until the next turn starts. While you are a statue, you won't be able to move. But you will gain immunity against inability effects, receive 30% less damage and recover your HP by 10% until the statue state is gone. (Reusable in 5 turns)",
+		"multiplier": null,
+		"icon": "fire-gargoyle-destructive-claws.png",
+		"skillups": [
+			"Cooltime Turn -1",
+			"Cooltime Turn -1"
+		]
+	}, {
+		"name": "State of Protection",
+		"type": "passive",
+		"description": "If your turn ends with full HP, you will be turned into a statue until the next turn starts. The damage dealt on allies will be reduced gradually if the ally gets attacked with multiple hits when you are turned into a statue. [Automatic Effect]",
+		"multiplier": null,
+		"icon": "fire-gargoyle-state-of-protection.png",
+		"skillups": []
+	}]
+},{
+	"name": "Kunite",
+	"family": "Gargoyle",
+	"icon": "kunite.png",
+	"stars": 4,
+	"element": "fire",
+	"awaken": {
+		"bonus": "Fire HP Leader",
+		"essences": [{
+			"type": "fire",
+			"quantity": 20,
+			"level": "mid"
+		}, {
+			"type": "fire",
+			"quantity": 10,
+			"level": "high"
+		}, {
+			"type": "magic",
+			"quantity": 15,
+			"level": "mid"
+		}, {
+			"type": "magic",
+			"quantity": 5,
+			"level": "high"
+		}]
+	},
+	"skills": [{
+		"name": "HP 40% Fire",
+		"type": "leader",
+		"description": "Increases the HP of ally monsters with Fire attribute by 40%.",
+		"multiplier": null,
+		"icon": "fire-hp-leader.png",
+		"skillups": []
+	}, {
+		"name": "Stone Claws",
+		"type": "skill",
+		"description": "Attacks the enemy to inflict damage that increases according to your Defense and increases your Defense by 20%. (Accumulates up to 5 times)",
+		"multiplier": "180%+260%",
+		"icon": "fire-gargoyle-stone-claws.png",
+		"skillups": [
+			"Damage +5%",
+			"Damage +5%",
+			"Damage +5%",
+			"Damage +5%",
+			"Damage +10%",
+			"Damage +10%"
+		]
+	}, {
+		"name": "Destructive Claws",
+		"type": "skill",
+		"description": "Inflicts damage on the enemy in proportion to your Defense and destroys the target's HP by the amount of damage dealt. Afterwards, you will be turned into a statue until the next turn starts. While you are a statue, you won't be able to move. But you will gain immunity against inability effects, receive 30% less damage and recover your HP by 10% until the statue state is gone. (Reusable in 5 turns)",
+		"multiplier": null,
+		"icon": "fire-gargoyle-destructive-claws.png",
+		"skillups": [
+			"Cooltime Turn -1",
+			"Cooltime Turn -1"
+		]
+	}, {
+		"name": "State of Protection",
+		"type": "passive",
+		"description": "If your turn ends with full HP, you will be turned into a statue until the next turn starts. The damage dealt on allies will be reduced gradually if the ally gets attacked with multiple hits when you are turned into a statue. [Automatic Effect]",
+		"multiplier": null,
+		"icon": "fire-gargoyle-state-of-protection.png",
+		"skillups": []
+	}]
+}]
