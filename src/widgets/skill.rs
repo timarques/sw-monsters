@@ -1,8 +1,8 @@
 use crate::data_structs::Skill as SkillDataStruct;
-use crate::widgets::{ExternalImage, Row, Size, Orientation};
+use crate::widgets::{ExternalImage, Row};
 use crate::traits::{LabelWidget, BoxWidget};
 use gdk_pixbuf::Pixbuf;
-use gtk::{Box, Label, Align, Image, EventBox, Revealer};
+use gtk::{Box, Label, Align, Image, EventBox, Revealer, Orientation};
 use gtk::prelude::{BoxExt, RevealerExt, ContainerExt, WidgetExt, LabelExt};
 use glib::object::Cast;
 
@@ -18,7 +18,6 @@ impl <'a> Skill <'a> {
         let container = Row::new()
             .child(&skill.content())
             .child(&details)
-            .size(Size::Small)
             .build();
         container.set_child_packing(&details, false, true, 0, gtk::PackType::Start);
         let event_box = EventBox::new();
@@ -41,14 +40,12 @@ impl <'a> Skill <'a> {
         .without_margins()
         .orientation(Orientation::Horizontal)
         .optional_child(self.effects())
-        .size(Size::Small)
         .build()
     }
 
     fn details(&self) -> Revealer {
 
         let event_box = Row::new()
-        .size(Size::Small)
         .optional_child({
             self.data.multiplier.as_ref().map(|multiplier| cascade! {
                 Label::new(Some(multiplier));
@@ -74,7 +71,7 @@ impl <'a> Skill <'a> {
                 }
             }
             (cascade! {
-                Box::new(gtk::Orientation::Horizontal, 0);
+                Box::new(Orientation::Horizontal, 0);
                 ..set_hexpand(true);
                 ..set_halign(Align::End);
                 ..add_from_vec(&images, false, true, 2);
@@ -89,7 +86,7 @@ impl <'a> Skill <'a> {
                 ..subtitle();
             });
             (cascade! {
-                Box::new(gtk::Orientation::Vertical, 0);
+                Box::new(Orientation::Vertical, 0);
                 ..add_from_iterator(skillups, false, true, 0);
             })
         })

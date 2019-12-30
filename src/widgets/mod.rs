@@ -15,12 +15,3 @@ pub use monster_row::MonsterRow;
 pub use container::Container;
 pub use row::Row;
 pub use skill::Skill;
-
-
-pub use gtk::Orientation;
-
-pub enum Size {
-    Small,
-    Medium,
-    Large
-}

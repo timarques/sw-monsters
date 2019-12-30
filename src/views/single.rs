@@ -1,9 +1,9 @@
 use crate::action::{Action, View};
 use crate::data_structs::Monster;
-use crate::widgets::{List, ExternalImage, Container, Row, Size, Orientation, Skill as SkillWidget};
+use crate::widgets::{List, ExternalImage, Container, Row, Skill as SkillWidget};
 use crate::traits::{Monster as MonsterTrait, BoxWidget, ContainerWidget};
 use gdk_pixbuf::Pixbuf;
-use gtk::{Image, Button, Box};
+use gtk::{Image, Button, Box, Orientation};
 use gtk::prelude::*;
 use std::cell::RefCell;
 
@@ -42,7 +42,6 @@ impl Single {
             .build();
         let row = Row::new()
             .image(&image)
-            .size(Size::Large)
             .without_margins()
             .title(&data.name)
             .subtitle(&format!(
@@ -51,7 +50,7 @@ impl Single {
                 &data.r#type.as_ref().unwrap().to_uppercase()
             ))
             .child(&cascade! {
-                Box::new(gtk::Orientation::Horizontal, 0);
+                Box::new(Orientation::Horizontal, 0);
                 ..pack_start(&Self::element(&data.element), false, true, 0);
                 ..pack_start(&Self::stars(&data.stars), false, true, 2);
             })
@@ -84,7 +83,6 @@ impl Single {
 
         fn get_row(title: &str, value: &str) -> Box {
             Row::new()
-                .size(Size::Small)
                 .orientation(Orientation::Horizontal)
                 .subtitle(&title)
                 .text(&value)
@@ -137,7 +135,7 @@ impl Single {
             let pixbuf = Pixbuf::new_from_file_at_scale(image_path.as_str(), 25, 25, true).unwrap();
             let text = format!("{} essences {} of {} ", essence.quantity, essence.level, essence.r#type);
             let image = Image::new_from_pixbuf(Some(&pixbuf));
-            Row::new().size(Size::Small).image(&image).text(&text).build()
+            Row::new().image(&image).text(&text).build()
         });
 
         List::new()
@@ -150,7 +148,6 @@ impl Single {
     }
 
     pub fn build(&self, monster: &Monster) {
-        println!("{:#?}", monster);
         *self.data.borrow_mut() = Some(monster.clone());
         self.container.go_top();
         self.main_box.remove_childs();

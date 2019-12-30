@@ -5,6 +5,7 @@ pub trait LabelWidget: LabelExt + WidgetExt {
     fn text(&self) -> &Self {
         self.get_style_context().add_class("text");
         self.set_xalign(0.0);
+        self.set_line_wrap(true);
         self
     }
 
