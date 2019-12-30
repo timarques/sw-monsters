@@ -1,30 +1,35 @@
-mod gui;
-mod monster;
+mod app;
+mod data_structs;
+mod scraper;
 mod action;
+mod utils;
+mod views;
+mod widgets;
+mod traits;
 
-use glib;
-use gui::Gui;
-use monster::Monster;
-use serde_json;
-use std::rc::Rc;
-use gio::prelude::*;
+#[macro_use]
+extern crate cascade;
+
+use gio::prelude::{ApplicationExt, ApplicationExtManual};
+use std::sync::Arc;
+
+impl traits::LabelWidget for gtk::Label {}
+impl <A: glib::IsA<gtk::Box>> traits::BoxWidget for A {}
+impl <A: glib::IsA<gtk::Container>> traits::ContainerWidget for A {}
 
 const APP_ID: &str = "com.github.timarques.sw-monsters";
 const APP_NAME: &str = "SW Monsters";
 const CSS: &str = include_str!("../data/ui.css");
-const MONSTERS: &str = include_str!("../data/monsters.json");
 
 fn main() {
-    glib::set_program_name(APP_NAME.into());
     glib::set_application_name(APP_NAME);
-    let data: Vec<Monster> = serde_json::from_str(&MONSTERS).unwrap();
+    glib::set_program_name(Some(APP_NAME));
     let application = gtk::Application::new(Some(APP_ID), gio::ApplicationFlags::FLAGS_NONE)
         .expect("GTK initialization failed");
-    application.connect_activate(move |app| {
-        let gui = Rc::new(Gui::new(app, data.clone()));
-        gui.load_styles(&CSS);
-        gui.connect_events(gui.clone());
-        gui.init();
-    });
+    application.connect_activate(move |gtk_app| {
+         let app = Arc::new(app::App::new(gtk_app.clone()));
+         app.load_styles(CSS);
+         app.run(app.clone());
+     });
     application.run(&[]);
 }

@@ -1,21 +1,15 @@
-.title {
-    font-size: 18px;
+.title, .subtitle{
     font-weight: bold;
 }
 
+.title {
+    font-size: 16px;
+}
+
 .subtitle {
-    font-weight: bold;
     font-size: 14px;
 }
 
 .text {
     font-size: 12px;
-}
-
-row {
-    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
-}
-
-flowboxchild {
-    padding: 0;
 }

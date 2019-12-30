@@ -1,7 +1,18 @@
-use crate::monster::Monster;
+use crate::data_structs::Monster;
 
-#[derive(Clone)]
+#[derive(Clone, Debug)]
+pub enum View {
+    Stack(),
+    Single(Monster),
+    Search(String),
+    Fusion(Monster)
+}
+
+#[derive(Clone, Debug)]
 pub enum Action {
-    Show(Monster),
-    Back()
+    CollectionReady(),
+    FusionsReady(),
+    GetMonster(Monster),
+    Back(),
+    ChangeView(View)
 }
