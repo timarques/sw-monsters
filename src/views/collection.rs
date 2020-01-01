@@ -1,7 +1,6 @@
 use crate::action::Action;
 use crate::data_structs::{Monster, Collection as CollectionDataStruct};
 use crate::widgets::{List, MonsterRow, Container};
-use std::sync::Arc;
 use gtk::{
     Box,
     Orientation,
@@ -20,15 +19,17 @@ pub struct Collection {
 
 impl Collection {
 
-    pub fn new(sender: &glib::Sender<Action>) -> Arc<Self> {
+    pub fn new(sender: &glib::Sender<Action>) -> Self {
         let main_box = Box::new(Orientation::Vertical, 0);
         let container = Container::new();
-        container.margin(12).width(600).child(&main_box);
-        Arc::new(Self {
+        container.margin(12);
+        container.width(600);
+        container.child(&main_box);
+        Self {
             container,
             main_box,
             sender: sender.clone()
-        })
+        }
     }
 
     fn get_families(&self, monsters: &Vec<Monster>) -> Vec<CollectionDataStruct<Monster>> {
@@ -59,11 +60,11 @@ impl Collection {
         let threadpool = threadpool::ThreadPool::new(glib::get_num_processors() as usize);
         let families = self.get_families(monsters);
         for family in families {
-            let childs = family.elements.iter().map(|monster| MonsterRow::new(&monster).threadpool(&threadpool).build(&self.sender));
+            let childs = family.elements.iter().map(|monster| MonsterRow::new(&monster, &self.sender).threadpool(&threadpool).build());
             self.main_box.pack_start(&List::new()
             .title(&family.r#type)
             .class("family")
-            .add_from_iterator(childs, |row| row.set_selectable(false))
+            .add_rows(childs, |row| row.set_selectable(false))
             .build(), false, true, 6);
         }
         self.main_box.show_all();

@@ -18,6 +18,7 @@ pub trait LabelWidget: LabelExt + WidgetExt {
     fn subtitle(&self) -> &Self {
         self.get_style_context().add_class("subtitle");
         self.set_xalign(0.0);
+        self.set_line_wrap(true);
         self
     }
 

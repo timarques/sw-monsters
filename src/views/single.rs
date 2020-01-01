@@ -1,6 +1,6 @@
 use crate::action::{Action, View};
 use crate::data_structs::Monster;
-use crate::widgets::{List, ExternalImage, Container, Row, Skill as SkillWidget};
+use crate::widgets::{List, ExternalImage, Container, Row, Skill as SkillWidget, MonsterRow, Size};
 use crate::traits::{Monster as MonsterTrait, BoxWidget, ContainerWidget};
 use gdk_pixbuf::Pixbuf;
 use gtk::{Image, Button, Box, Orientation};
@@ -23,7 +23,9 @@ impl Single {
         let container = Container::new();
         let main_box = Box::new(Orientation::Vertical, 0);
         main_box.set_property_margin(12);
-        container.margin(12).width(600).child(&main_box);
+        container.margin(12);
+        container.width(600);
+        container.child(&main_box);
         Single {
             container,
             sender,
@@ -35,6 +37,10 @@ impl Single {
     fn get_header(&self) -> Box {
         let data = self.data.borrow();
         let data = data.as_ref().unwrap();
+        let mut subtitle = format!("{} - ({}", data.family, data.r#type.as_ref().unwrap());
+        if data.fusion.is_some() { subtitle = format!("{}, Fusion", subtitle); }
+        if data.second_awakening.is_some() { subtitle = format!("{}, Second Awakening", subtitle); }
+        subtitle = format!("{})", subtitle);
         let image = ExternalImage::new(&data.image)
             .dimensions(100, 100)
             .placeholder("data/images/monster.svg")
@@ -44,11 +50,7 @@ impl Single {
             .image(&image)
             .without_margins()
             .title(&data.name)
-            .subtitle(&format!(
-                "{} ({})",
-                &data.family,
-                &data.r#type.as_ref().unwrap().to_uppercase()
-            ))
+            .subtitle(&subtitle)
             .child(&cascade! {
                 Box::new(Orientation::Horizontal, 0);
                 ..pack_start(&Self::element(&data.element), false, true, 0);
@@ -59,12 +61,12 @@ impl Single {
         row
     }
 
-    fn get_buttons(&self) -> gtk::ButtonBox {
+    /*fn get_buttons(&self) -> gtk::ButtonBox {
         let data = self.data.borrow();
         let data = data.as_ref().unwrap();
         let button_box = gtk::ButtonBox::new(Orientation::Horizontal);
         button_box.set_layout(gtk::ButtonBoxStyle::Start);
-        button_box.add_if_some(data.fusion.as_ref().map(|_monsters| Button::new_with_label("Fusion")), false, true, 2);
+        button_box.add_if_some(data.fusion.as_ref().map(|_| Button::new_with_label("Fusion")), false, true, 2);
         button_box.add_if_some(data.second_awakening.as_ref().map(|monster| {
             let sender = self.sender.clone();
             let monster = *monster.clone();
@@ -75,7 +77,7 @@ impl Single {
             button
         }), false, true, 2);
         button_box
-    }
+    }*/
 
     fn get_stats(&self) -> Box {
         let data = self.data.borrow();
@@ -103,7 +105,7 @@ impl Single {
         List::new()
         .title("Stats")
         .class("stats")
-        .add_from_vec(stats, |row| {
+        .add_rows(stats, |row| {
             row.set_selectable(false);
             row.set_activatable(false);
         }).build()
@@ -120,7 +122,7 @@ impl Single {
             let list = List::new()
                 .class("skills")
                 .title(&collection.r#type)
-                .add_from_iterator(childs, |row| row.set_selectable(false))
+                .add_rows(childs, |row| row.set_selectable(false))
                 .build();
             lists.push(list);
         }
@@ -141,10 +143,44 @@ impl Single {
         List::new()
         .title("Essences")
         .class("essences")
-        .add_from_iterator(childs, |row| {
+        .add_rows(childs, |row| {
             row.set_selectable(false);
             row.set_activatable(false);
         }).build()
+    }
+
+    fn get_fusion(&self) -> Option<Vec<Box>> {
+        let data = self.data.borrow();
+        data.as_ref().unwrap().fusion.as_ref().map(|fusion| {
+            let mut lists: Vec<Box> = Vec::new();
+
+            if let Some(ref monster) = fusion.used_in {
+                lists.push(
+                    List::new()
+                    .title("Fusion Recipe where it is used")
+                    .class("fusion")
+                    .add_row(&MonsterRow::new(monster, &self.sender).family().size(Size::Small).build(), |row| {
+                        row.set_selectable(false);
+                    }).build()
+                )
+            }
+
+            if let Some(ref recipe) = fusion.recipe {
+                let childs = recipe.iter().map(|monster| {
+                    MonsterRow::new(&monster, &self.sender).family().size(Size::Small).build()
+                });
+                lists.push(
+                    List::new()
+                    .title("Fusion Recipe")
+                    .class("fusion")
+                    .add_rows(childs, |row| {
+                        row.set_selectable(false);
+                    }).build()
+                )
+            }
+
+            lists
+        })
     }
 
     pub fn build(&self, monster: &Monster) {
@@ -155,7 +191,9 @@ impl Single {
         self.main_box.pack_start(&self.get_stats(), false, true, 0);
         self.main_box.add_from_vec(&self.get_skills(), false, true, 0);
         self.main_box.pack_start(&self.get_essences(), false, true, 0);
-        self.main_box.pack_start(&self.get_buttons(), false, true, 0);
+        if let Some(fusion) = self.get_fusion() {
+            self.main_box.add_from_vec(&fusion, false, true, 0);
+        }
         self.main_box.show_all();
     }
 

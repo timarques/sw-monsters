@@ -15,3 +15,9 @@ pub use monster_row::MonsterRow;
 pub use container::Container;
 pub use row::Row;
 pub use skill::Skill;
+
+pub enum Size {
+    Small,
+    Normal,
+    Big
+}

@@ -4,12 +4,18 @@ pub mod filters {
 
     pub fn only_numbers(string: &str) -> i32 {
         let regex = regex::Regex::new(r"\d+").unwrap();
-        regex.find(string).unwrap().as_str().parse().unwrap()
+        match regex.find(string) {
+            Some(result) => result.as_str().parse().unwrap(),
+            None => 0
+        }
     }
 
     pub fn only_letters(string: &str) -> &str {
         let regex = regex::Regex::new("[a-z]+").unwrap();
-        regex.find(string).unwrap().as_str()
+        match regex.find(string) {
+            Some(result) => result.as_str(),
+            None => ""
+        }
     }
 
     pub fn capitalize(string: &str) -> String {

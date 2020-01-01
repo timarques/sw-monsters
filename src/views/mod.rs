@@ -3,14 +3,13 @@ mod single;
 mod loading;
 mod search;
 mod fusions;
-use std::sync::Arc;
 
 pub struct Views {
-    pub collection: Arc<collection::Collection>,
+    pub collection: collection::Collection,
     pub single: single::Single,
     pub loading: loading::Loading,
     pub search: search::Search,
-    pub fusions: Arc<fusions::Fusions>,
+    pub fusions: fusions::Fusions,
     pub stack: gtk::Stack,
     pub views_stack: gtk::Stack
 }

@@ -1,7 +1,7 @@
 #[derive(Clone, Debug, PartialEq)]
 pub struct Fusion {
-    pub parent: Option<Monster>,
-    pub childs: Option<Vec<Monster>>
+    pub used_in: Option<Monster>,
+    pub recipe: Option<Vec<Monster>>
 }
 
 #[derive(Clone, Debug, PartialEq)]

@@ -6,7 +6,8 @@ use select::{
         Class,
         Attr,
         Predicate,
-        And
+        And,
+        Not
     },
     node::{Find, Node},
     document::Document
@@ -115,13 +116,13 @@ pub fn get_fusions_monsters(monsters: &Vec<Monster>) -> Result<Vec<Monster>, &'s
             let mut nat4_monster = find_monster(monsters, names.next().unwrap().text());
             let elements: Vec<Monster> = names.map(|name| {
                 let mut monster = find_monster(monsters, name.text());
-                monster.fusion = Some(Box::new(Fusion{ parent: Some(nat4_monster.clone()), childs: None }));
+                monster.fusion = Some(Box::new(Fusion{ used_in: Some(nat4_monster.clone()), recipe: None }));
                 fusions_monsters.push(monster.clone());
                 monster
             }).collect();
             nat4_monster.fusion = Some(Box::new(Fusion {
-                parent: Some(nat5_monster.clone()),
-                childs: match elements.is_empty() {
+                used_in: Some(nat5_monster.clone()),
+                recipe: match elements.is_empty() {
                     true => None,
                     false => Some(elements)
                 }
@@ -130,8 +131,8 @@ pub fn get_fusions_monsters(monsters: &Vec<Monster>) -> Result<Vec<Monster>, &'s
             nat4_monster
         }).collect();
         nat5_monster.fusion = Some(Box::new(Fusion{
-            parent: None,
-            childs: Some(fusion_monsters)
+            used_in: None,
+            recipe: Some(fusion_monsters)
         }));
         fusions_monsters.push(nat5_monster);
     }
@@ -145,14 +146,15 @@ pub fn get_monster(monster: Monster) -> Result<Monster, &'static str> {
     let article = document.find(Class("monster-page")).next().unwrap();
     let content = article.find(Class("content")).next().unwrap();
     let mut monster = monster.clone();
-    monster.r#type = Some(
-        article
+    monster.r#type = Some(filters::capitalize(
+            &article
             .find(Class("stars")
             .descendant(Name("span")))
             .next()
             .unwrap()
             .text()
             .to_lowercase()
+        )
     );
     monster.essences = content.find(Class("essences").descendant(Name("span"))).map(|essence| {
         let text = essence.text();
@@ -167,7 +169,7 @@ pub fn get_monster(monster: Monster) -> Result<Monster, &'static str> {
             quantity
         }
     }).collect();
-    let mut stats_divisions = content.find(And(Class("wrapper"), Class("text-center")));
+    let mut stats_divisions = content.find(And(And(Class("wrapper"), Class("text-center")), Not(Class("portrait-container"))));
     monster.stats = Some(parse_stats(
         stats_divisions
         .next()

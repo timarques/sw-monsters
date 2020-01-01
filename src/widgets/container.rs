@@ -18,28 +18,24 @@ impl Container {
         Self {scrolled_window, viewport, column}
     }
 
-    pub fn go_top(&self) -> &Self {
+    pub fn go_top(&self) {
         self.scrolled_window.set_vadjustment(Some(&gtk::Adjustment::new(0.0, 0.0, 0.0, 0.0, 0.0, 0.0)));
-        self
     }
 
-    pub fn width(&self, value: i32) -> &Self {
+    pub fn width(&self, value: i32) {
         self.column.set_maximum_width(value);
         self.column.set_linear_growth_width(value);
-        self
     }
 
-    pub fn margin(&self, value: i32) -> &Self {
+    pub fn margin(&self, value: i32) {
         self.column.set_margin_start(value);
         self.column.set_margin_end(value);
-        self
     }
 
-    pub fn child<A>(&self, child: &A) -> &Self
+    pub fn child<A>(&self, child: &A)
     where A: glib::IsA<gtk::Widget> {
         self.column.remove_childs();
         self.column.add(child);
-        self
     }
 
     pub fn get(&self) -> ScrolledWindow {

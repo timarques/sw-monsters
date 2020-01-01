@@ -45,7 +45,7 @@ impl List {
         self
     }
 
-    pub fn add<A, B>(self, widget: &A, callback: B) -> Self
+    pub fn add_row<A, B>(self, widget: &A, callback: B) -> Self
     where
         A: IsA<Widget>,
         B: Fn(&ListBoxRow)
@@ -57,20 +57,11 @@ impl List {
         self
     }
 
-    pub fn add_from_vec<A, B>(self, childs: Vec<A>, callback: B) -> Self
-    where A: IsA<Widget>,
-    B: Fn(&ListBoxRow) + 'static + Send {
-        for child in childs {
-            let row = ListBoxRow::new();
-            row.add(&child);
-            callback(&row);
-            self.list_box.add(&row);
-        }
-        self
-    }
-
-    pub fn add_from_iterator<A,B,C>(self, childs: A, callback: C) -> Self
-    where A: Iterator<Item = B>, B: IsA<Widget>, C: Fn(&ListBoxRow) + 'static + Send {
+    pub fn add_rows<A, B, C>(self, childs: A, callback: C) -> Self
+    where
+        A: IntoIterator<Item = B>,
+        B:glib::IsA<gtk::Widget>,
+        C: Fn(&ListBoxRow) + 'static + Send {
         for child in childs {
             let row = ListBoxRow::new();
             row.add(&child);

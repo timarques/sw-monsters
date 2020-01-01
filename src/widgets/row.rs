@@ -48,12 +48,19 @@ impl Row {
         self
     }
 
-    pub fn child<B: glib::IsA<gtk::Widget>>(mut self, child: &B) -> Self {
+    pub fn child<A: glib::IsA<gtk::Widget>>(mut self, child: &A) -> Self {
         self.childs.push(child.clone().upcast::<Widget>());
         self
     }
 
-    pub fn optional_child<B: glib::IsA<gtk::Widget>>(mut self, child: Option<B>) -> Self {
+    pub fn childs<A: IntoIterator<Item = B>, B: glib::IsA<gtk::Widget>>(mut self, childs: A) -> Self {
+        for child in childs {
+            self.childs.push(child.clone().upcast::<Widget>());
+        }
+        self
+    }
+
+    pub fn optional_child<A: glib::IsA<gtk::Widget>>(mut self, child: Option<A>) -> Self {
         if let Some(child) = child {
             self.childs.push(child.clone().upcast::<Widget>());
         }

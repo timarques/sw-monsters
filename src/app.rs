@@ -37,6 +37,7 @@ impl App{
         let window = cascade! {
             ApplicationWindow::new(&app);
             ..set_default_size(800, 600);
+            ..set_size_request(400, 300);
             ..set_titlebar(Some(&header.container));
             ..set_position(WindowPosition::Center);
             ..add(&main_box);

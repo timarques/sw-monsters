@@ -42,4 +42,16 @@ pub trait BoxWidget: BoxExt {
         }
     }
 
+    fn add_childs<A: IntoIterator<Item = B>, B: glib::IsA<gtk::Widget>>(
+        &self,
+        childs: A,
+        expand: bool,
+        fill: bool,
+        padding: u32
+    )  {
+        for child in childs {
+            self.pack_start(&child, expand, fill, padding);
+        }
+    }
+
 }
