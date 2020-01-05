@@ -1,19 +1,20 @@
-use gtk::{Image, Box, Orientation, BoxExt};
+use gtk::{Image, Box, Orientation, BoxExt, ImageExt};
 use gdk_pixbuf::Pixbuf;
 
 pub trait Monster {
 
     fn element(element: &str) -> Image {
-        let path = format!("data/images/elements/{}.png", element);
+        let path = format!("data/icons/elements/{}.png", element);
         let pixbuf = Pixbuf::new_from_file_at_size(&path, 20, 20).unwrap();
         Image::new_from_pixbuf(Some(&pixbuf))
     }
 
     fn stars(stars: &i8) -> Box {
-        let pixbuf = Pixbuf::new_from_file_at_size("data/images/star.svg", 10, 10).unwrap();
         let main_box = Box::new(Orientation::Horizontal, 0);
         for _ in 0 .. *stars {
-            main_box.pack_start(&Image::new_from_pixbuf(Some(&pixbuf)), true, false, 0);
+            let image = Image::new_from_icon_name(Some("starred-symbolic"), gtk::IconSize::unscaled());
+            image.set_pixel_size(10);
+            main_box.pack_start(&image, true, false, 0);
         }
         main_box
     }

@@ -1,17 +1,15 @@
-use crate::data_structs::Monster;
+use crate::data_structs::{Collection, Monster};
 
 #[derive(Clone, Debug)]
 pub enum View {
     Stack(),
     Single(Monster),
-    Search(String),
-    Fusion(Monster)
+    Search(String)
 }
 
 #[derive(Clone, Debug)]
 pub enum Action {
-    CollectionReady(),
-    FusionsReady(),
+    Ready(Vec<Collection<Monster>>),
     GetMonster(Monster),
     Back(),
     ChangeView(View)

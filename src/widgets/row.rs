@@ -1,6 +1,6 @@
 #![allow(dead_code)]
 use gtk::{Label, Widget, Align, Orientation};
-use gtk::prelude::{BoxExt, WidgetExt, StyleContextExt, LabelExt, BuilderExtManual};
+use gtk::prelude::{BoxExt, WidgetExt, StyleContextExt};
 use glib::object::Cast;
 use crate::traits::{LabelWidget, BoxWidget};
 
@@ -80,7 +80,7 @@ impl Row {
     pub fn build(&self) -> gtk::Box {
         let wrapper = gtk::Box::new(self.orientation, 0);
         wrapper.set_valign(Align::Center);
-        wrapper.add_from_vec(&self.childs, false, true, 2);
+        wrapper.pack_start_many(self.childs.clone(), false, true, 2);
 
         let widget = match &self.image {
             Some(image) => {

@@ -38,12 +38,21 @@ impl <'a> ExternalImage <'a> {
         self
     }
 
-    pub fn placeholder(self, path: &str) -> Self {
-        let pixbuf = match self.dimensions {
-            Some([width, height]) => Pixbuf::new_from_file_at_scale(path, width, height, false),
-            None => Pixbuf::new_from_file(path)
-        }.unwrap();
-        self.image.set_from_pixbuf(Some(&pixbuf));
+    pub fn placeholder(self, path: &str, icon: bool) -> Self {
+        match icon {
+            true => {
+                self.image.set_from_icon_name(Some(path), gtk::IconSize::Button);
+                if let Some([width, _]) = self.dimensions {
+                    self.image.set_pixel_size(width);
+                }
+            },
+            false => {
+                self.image.set_from_pixbuf(Some(&match self.dimensions {
+                    Some([width, height]) => Pixbuf::new_from_file_at_scale(path, width, height, false),
+                    None => Pixbuf::new_from_file(path)
+                }.unwrap()));
+            }
+        }
         self
     }
 

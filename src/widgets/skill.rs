@@ -3,7 +3,7 @@ use crate::widgets::{ExternalImage, Row};
 use crate::traits::{LabelWidget, BoxWidget};
 use gdk_pixbuf::Pixbuf;
 use gtk::{Box, Label, Align, Image, EventBox, Revealer, Orientation};
-use gtk::prelude::{BoxExt, RevealerExt, ContainerExt, WidgetExt, LabelExt};
+use gtk::prelude::{BoxExt, RevealerExt, ContainerExt, WidgetExt};
 use glib::object::Cast;
 
 pub struct Skill<'a> {
@@ -20,13 +20,14 @@ impl <'a> Skill <'a> {
             .child(&details)
             .build();
         container.set_child_packing(&details, false, true, 0, gtk::PackType::Start);
-        let event_box = EventBox::new();
-        event_box.add(&container);
-        event_box.connect_button_press_event(move |_, _| {
-            details.set_reveal_child(!details.get_reveal_child());
-            gtk::Inhibit(false)
-        });
-        event_box
+        (cascade! {
+            EventBox::new();
+            ..add(&container);
+            ..connect_button_press_event(move |_, _| {
+                details.set_reveal_child(!details.get_reveal_child());
+                gtk::Inhibit(false)
+            });
+        })
     }
 
     fn image(&self) -> Image {
@@ -36,7 +37,7 @@ impl <'a> Skill <'a> {
     fn content(&self) -> Box {
         Row::new()
         .image(&self.image())
-        .title(&self.data.name)
+        .subtitle(&self.data.name)
         .without_margins()
         .orientation(Orientation::Horizontal)
         .optional_child(self.effects())
@@ -65,7 +66,7 @@ impl <'a> Skill <'a> {
         self.data.effects.as_ref().map(|effects| {
             let mut images = Vec::new();
             for effect in effects {
-                let image_path = format!("data/images/effects/{}.png", effect);
+                let image_path = format!("data/icons/effects/{}.png", effect);
                 if let Ok(pixbuf) = Pixbuf::new_from_file_at_size(&image_path, 20, 20) {
                     images.push(Image::new_from_pixbuf(Some(&pixbuf)));
                 }
@@ -74,7 +75,7 @@ impl <'a> Skill <'a> {
                 Box::new(Orientation::Horizontal, 0);
                 ..set_hexpand(true);
                 ..set_halign(Align::End);
-                ..add_from_vec(&images, false, true, 2);
+                ..pack_start_many(images, false, true, 2);
             })
         })
     }
@@ -87,7 +88,7 @@ impl <'a> Skill <'a> {
             });
             (cascade! {
                 Box::new(Orientation::Vertical, 0);
-                ..add_from_iterator(skillups, false, true, 0);
+                ..pack_start_many(skillups, false, true, 0);
             })
         })
     }

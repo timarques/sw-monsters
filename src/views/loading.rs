@@ -10,11 +10,13 @@ impl Loading {
 
     pub fn new() -> Self {
         let spinner = Spinner::new();
-        let container = Box::new(Orientation::Vertical, 0);
-        spinner.set_size_request(50, 50);
-        container.add(&spinner);
-        container.set_property_expand(true);
-        container.set_valign(gtk::Align::Center);
+        let container = cascade! {
+            Box::new(Orientation::Vertical, 0);
+            ..add(&spinner);
+            ..set_property_expand(true);
+            ..set_valign(gtk::Align::Center);
+        };
+        spinner.set_size_request(35, 35);
         Loading { container, spinner }
     }
 

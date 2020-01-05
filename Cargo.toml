@@ -8,8 +8,8 @@ edition = "2018"
 gtk = { version = "0.8", features = ["v3_24"] }
 gdk-pixbuf = "0.8"
 gio = "0.8"
-pango = "0.8"
 glib = "0.9"
+pango = "0.8"
 libhandy = { git = "https://gitlab.gnome.org/World/Rust/libhandy-rs.git" }
 select = "0.4"
 reqwest = "0.9"

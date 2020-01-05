@@ -18,6 +18,5 @@ pub use skill::Skill;
 
 pub enum Size {
     Small,
-    Normal,
-    Big
+    Normal
 }

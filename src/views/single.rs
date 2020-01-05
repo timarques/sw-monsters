@@ -1,9 +1,9 @@
-use crate::action::{Action, View};
+use crate::action::Action;
 use crate::data_structs::Monster;
 use crate::widgets::{List, ExternalImage, Container, Row, Skill as SkillWidget, MonsterRow, Size};
 use crate::traits::{Monster as MonsterTrait, BoxWidget, ContainerWidget};
 use gdk_pixbuf::Pixbuf;
-use gtk::{Image, Button, Box, Orientation};
+use gtk::{Image, Box, Orientation};
 use gtk::prelude::*;
 use std::cell::RefCell;
 
@@ -43,7 +43,7 @@ impl Single {
         subtitle = format!("{})", subtitle);
         let image = ExternalImage::new(&data.image)
             .dimensions(100, 100)
-            .placeholder("data/images/monster.svg")
+            .placeholder("monster-symbolic", true)
             .border()
             .build();
         let row = Row::new()
@@ -60,24 +60,6 @@ impl Single {
         row.set_margin_bottom(6);
         row
     }
-
-    /*fn get_buttons(&self) -> gtk::ButtonBox {
-        let data = self.data.borrow();
-        let data = data.as_ref().unwrap();
-        let button_box = gtk::ButtonBox::new(Orientation::Horizontal);
-        button_box.set_layout(gtk::ButtonBoxStyle::Start);
-        button_box.add_if_some(data.fusion.as_ref().map(|_| Button::new_with_label("Fusion")), false, true, 2);
-        button_box.add_if_some(data.second_awakening.as_ref().map(|monster| {
-            let sender = self.sender.clone();
-            let monster = *monster.clone();
-            let button = Button::new_with_label("Second Awakening");
-            button.connect_clicked(move |_| {
-                sender.send(Action::ChangeView(View::Single(monster.clone()))).unwrap();
-            });
-            button
-        }), false, true, 2);
-        button_box
-    }*/
 
     fn get_stats(&self) -> Box {
         let data = self.data.borrow();
@@ -133,7 +115,7 @@ impl Single {
         let data = self.data.borrow();
         let essences = &data.as_ref().unwrap().essences;
         let childs = essences.iter().map(|essence|{
-            let image_path = format!("data/images/essences/{}-{}.png", essence.r#type, essence.level);
+            let image_path = format!("data/icons/essences/{}-{}.png", essence.r#type, essence.level);
             let pixbuf = Pixbuf::new_from_file_at_scale(image_path.as_str(), 25, 25, true).unwrap();
             let text = format!("{} essences {} of {} ", essence.quantity, essence.level, essence.r#type);
             let image = Image::new_from_pixbuf(Some(&pixbuf));
@@ -147,6 +129,19 @@ impl Single {
             row.set_selectable(false);
             row.set_activatable(false);
         }).build()
+    }
+
+    fn get_family(&self) -> Box {
+        let data = self.data.borrow();
+        let family = data.as_ref().unwrap().family_elements.as_ref().unwrap();
+        let childs = family.iter().map(|monster| {
+            MonsterRow::new(&monster, &self.sender).family().size(Size::Small).build()
+        });
+        List::new()
+            .title("Family")
+            .class("family")
+            .add_rows(childs, |row| row.set_selectable(false))
+            .build()
     }
 
     fn get_fusion(&self) -> Option<Vec<Box>> {
@@ -173,9 +168,8 @@ impl Single {
                     List::new()
                     .title("Fusion Recipe")
                     .class("fusion")
-                    .add_rows(childs, |row| {
-                        row.set_selectable(false);
-                    }).build()
+                    .add_rows(childs, |row| row.set_selectable(false))
+                    .build()
                 )
             }
 
@@ -189,10 +183,11 @@ impl Single {
         self.main_box.remove_childs();
         self.main_box.pack_start(&self.get_header(), false, true, 0);
         self.main_box.pack_start(&self.get_stats(), false, true, 0);
-        self.main_box.add_from_vec(&self.get_skills(), false, true, 0);
+        self.main_box.pack_start_many(self.get_skills(), false, true, 0);
         self.main_box.pack_start(&self.get_essences(), false, true, 0);
+        self.main_box.pack_start(&self.get_family(), false, true, 0);
         if let Some(fusion) = self.get_fusion() {
-            self.main_box.add_from_vec(&fusion, false, true, 0);
+            self.main_box.pack_start_many(fusion, false, true, 0);
         }
         self.main_box.show_all();
     }

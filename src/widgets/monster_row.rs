@@ -55,7 +55,7 @@ impl <'a> MonsterRow <'a> {
         let image = match self.size {
             Size::Small => image.dimensions(25, 25),
             _ => image.dimensions(50, 50)
-        }.placeholder("data/images/monster.svg");
+        }.placeholder("monster-symbolic", true);
 
         let image = match self.threadpool {
             Some(threadpool) => image.build_with_threadpool(threadpool),
