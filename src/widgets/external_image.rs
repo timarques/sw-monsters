@@ -5,6 +5,7 @@ use gio::{MemoryInputStream, Cancellable};
 use gdk_pixbuf::Pixbuf;
 use std::io::Read;
 use glib::object::Cast;
+use crate::threadpool;
 
 pub struct ExternalImage<'a> {
     source: &'a str,
@@ -72,8 +73,7 @@ impl <'a> ExternalImage <'a> {
         let dimensions = self.dimensions.clone();
         let image = self.image.clone();
         receiver.attach(None, move |bytes|{
-            if let Err(error) = bytes {
-                log::warn!("{}", error);
+            if let Err(_error) = bytes {
                 return glib::Continue(false);
             }
             let stream = MemoryInputStream::new_from_bytes(&Bytes::from_owned(bytes.unwrap()));
@@ -119,7 +119,7 @@ impl <'a> ExternalImage <'a> {
         let source = self.source.to_string().clone();
         let (sender, receiver) = MainContext::channel(glib::PRIORITY_DEFAULT);
         self.connect_receiver(receiver);
-        threadpool.execute(move || sender.send(Self::get_bytes(source)).unwrap());
+        threadpool.add(move || sender.send(Self::get_bytes(source)).unwrap());
         self.get_widget()
     }
 

@@ -1,16 +1,17 @@
-use crate::data_structs::{Collection, Monster};
+use super::data::Monster;
+use super::error::Error;
 
-#[derive(Clone, Debug)]
+#[derive(Clone)]
 pub enum View {
-    Stack(),
-    Single(Monster),
-    Search(String)
+    List(Vec<Monster>),
+    Collection(),
+    Single(Monster)
 }
 
-#[derive(Clone, Debug)]
 pub enum Action {
-    Ready(Vec<Collection<Monster>>),
-    GetMonster(Monster),
+    Ready(),
+    SyncFinished(),
+    Load(Box<dyn Send + Sync + 'static + FnOnce() -> Result<View, Error>>),
     Back(),
     ChangeView(View)
 }

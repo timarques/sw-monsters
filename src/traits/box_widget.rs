@@ -1,6 +1,8 @@
 use glib::IsA;
 use gtk::{Widget, prelude::BoxExt};
 
+impl <A: glib::IsA<gtk::Box>> BoxWidget for A {}
+
 pub trait BoxWidget: BoxExt {
 
     fn pack_start_if_some<A>(

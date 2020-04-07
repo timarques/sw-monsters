@@ -1,38 +1,74 @@
 mod app;
-mod data_structs;
-mod scraper;
-mod action;
-mod utils;
 mod views;
 mod widgets;
 mod traits;
+mod threadpool;
+mod header;
+mod data;
+mod action;
+mod scraper;
+mod utils;
+mod error;
 
 #[macro_use]
-extern crate cascade;
+extern crate lazy_static;
 
 use gio::prelude::{ApplicationExt, ApplicationExtManual};
-use std::sync::Arc;
 
-impl traits::LabelWidget for gtk::Label {}
-impl <A: glib::IsA<gtk::Box>> traits::BoxWidget for A {}
-impl <A: glib::IsA<gtk::Container>> traits::ContainerWidget for A {}
+static mut UNSAFE_SENDER: Option<glib::Sender<action::Action>> = None;
 
-fn main() {
-    let app_info = data_structs::AppInfo {
+#[derive(Clone, Debug)]
+struct AppInfo {
+    pub name: &'static str,
+    pub id: &'static str,
+    pub version: &'static str,
+    pub authors: Vec<&'static str>,
+    pub repository: &'static str
+}
+
+struct CustomSender<'a> {
+    sender: &'a Option<glib::Sender<action::Action>>
+}
+
+impl <'a> CustomSender <'a> {
+
+    pub unsafe fn new() -> Self {
+        Self { sender: &UNSAFE_SENDER }
+    }
+
+    pub fn send(&self, action: action::Action) {
+        self.sender.as_ref().unwrap().send(action).unwrap();
+    }
+
+}
+
+lazy_static!{
+    static ref SENDER: CustomSender<'static> = unsafe {CustomSender::new()};
+    static ref APP_INFO: AppInfo = AppInfo {
         name: "SW Monsters",
         id: "com.github.timarques.sw-monsters",
         authors: env!("CARGO_PKG_AUTHORS").split(", ").collect(),
         version: env!("CARGO_PKG_VERSION"),
-        repository: "com.github.timarques.sw-monsters"
+        repository: "https://github.com/timarques/sw-monsters"
     };
-    glib::set_application_name(app_info.name);
-    glib::set_program_name(Some(app_info.name));
-    let application = gtk::Application::new(Some(app_info.id), gio::ApplicationFlags::FLAGS_NONE)
-        .expect("GTK initialization failed");
-    application.connect_activate(move |gtk_app| {
-         let app = Arc::new(app::App::new(gtk_app.clone(), &app_info));
-         app.load_styles(include_str!("../data/ui.css"));
-         app.run(app.clone());
-     });
+    static ref DATA: data::Data = data::Data::new(&{
+        let mut path = glib::get_user_cache_dir().unwrap_or(std::path::Path::new("~/.cache").to_path_buf());
+        path.push(APP_INFO.id);
+        path.push("data.json");
+        path
+    });
+    static ref THREAD_POOL: threadpool::ThreadPool = {
+        let threadpool = threadpool::ThreadPool::new();
+        threadpool.workers(glib::get_num_processors() as i32 + 1);
+        threadpool
+    };
+}
+
+fn main() {
+
+    glib::set_application_name(APP_INFO.name);
+    glib::set_program_name(Some(APP_INFO.name));
+    let application = gtk::Application::new(Some(APP_INFO.id), gio::ApplicationFlags::FLAGS_NONE).expect("GTK initialization failed");
+    application.connect_activate(move |gtk_app| app::App::run(gtk_app, include_str!("../data/ui.css")));
     application.run(&[]);
 }

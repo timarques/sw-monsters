@@ -1,26 +1,22 @@
-#![allow(dead_code)]
-use crate::data_structs::Monster;
-use crate::action::Action;
-use crate::traits::{Monster as MonsterTrait};
+use crate::data::Monster;
+use crate::traits::LabelWidget;
 use crate::widgets::{ExternalImage, Row, Size};
+use crate::threadpool;
 use gtk::{EventBox, Orientation};
-use gtk::prelude::{BoxExt, WidgetExt, ContainerExt };
-use glib::Sender;
+use gtk::prelude::{BoxExt, WidgetExt, ContainerExt};
 
 pub struct MonsterRow<'a> {
-    data: &'a Monster,
+    monster: &'a Monster,
     family: bool,
     threadpool: Option<&'a threadpool::ThreadPool>,
-    sender: &'a Sender<Action>,
-    size: Size
+    size: Size,
+    callback: Option<Box<dyn Fn() + Send + 'static>>
 }
-
-impl MonsterTrait for MonsterRow<'_> {}
 
 impl <'a> MonsterRow <'a> {
 
-    pub fn new(data: &'a Monster, sender: &'a Sender<Action>) -> Self {
-        Self {data, family: false, threadpool: None, sender, size: Size::Normal}
+    pub fn new(monster: &'a Monster) -> Self {
+        Self {monster, family: false, threadpool: None, size: Size::Normal, callback: None}
     }
 
     pub fn family(mut self) -> Self {
@@ -38,19 +34,25 @@ impl <'a> MonsterRow <'a> {
         self
     }
 
-    pub fn build(&self) -> EventBox {
-        let element_and_stars = cascade! {
-            gtk::Box::new(Orientation::Horizontal, 0);
-            ..pack_start(&Self::element(&self.data.element), false, true, 0);
-            ..pack_start(&Self::stars(&self.data.stars), false, true, 2);
-        };
+    pub fn callback<A: Fn() + Send + 'static>(mut self, callback: A) -> Self {
+        self.callback = Some(Box::new(callback));
+        self
+    }
+
+    pub fn build(mut self) -> EventBox {
+        let element_and_stars = gtk::Box::new(Orientation::Horizontal, 0);
+        element_and_stars.pack_start(&self.monster.element(), false, true, 0);
+        element_and_stars.pack_start(&self.monster.stars(match self.size {
+            Size::Small => 0,
+            Size::Normal => 2
+        }), false, true, 2);
 
         let title = match self.family {
-            true => format!("{} ({})", self.data.name, self.data.family),
-            false => self.data.name.clone()
+            true => format!("{} ({})", self.monster.name, self.monster.family),
+            false => self.monster.name.clone()
         };
 
-        let image = ExternalImage::new(&self.data.image);
+        let image = ExternalImage::new(&self.monster.image);
 
         let image = match self.size {
             Size::Small => image.dimensions(25, 25),
@@ -67,23 +69,30 @@ impl <'a> MonsterRow <'a> {
                 Row::new()
                     .orientation(Orientation::Horizontal)
                     .child(&element_and_stars)
-                    .subtitle(&title)
+                    .child(&gtk::Label::new_subtitle(&title))
                     .image(&image)
                     .build()
             },
-            _ => Row::new().subtitle(&title).child(&element_and_stars).image(&image).build()
+            _ => {
+                Row::new()
+                    .child(&gtk::Label::new_subtitle(&title))
+                    .child(&element_and_stars)
+                    .image(&image)
+                    .build()
+            }
         };
 
-        let sender = self.sender.clone();
-        let data = self.data.clone();
-        (cascade! {
-            EventBox::new();
-            ..add(&row);
-            ..connect_button_press_event(move |_, _| {
-                sender.send(Action::GetMonster(data.clone())).unwrap();
+        let event_box = EventBox::new();
+        event_box.add(&row);
+
+        if let Some(callback) = self.callback.take() {
+            event_box.connect_button_press_event(move |_, _| {
+                callback();
                 gtk::Inhibit(false)
             });
-        })
+        }
+
+        event_box
     }
 
 }

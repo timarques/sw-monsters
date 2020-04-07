@@ -1,5 +1,3 @@
-#![allow(dead_code)]
-
 pub mod filters {
 
     pub fn only_numbers(string: &str) -> i32 {
@@ -29,6 +27,11 @@ pub mod filters {
             let mut chars = word.chars();
             chars.next().unwrap().to_uppercase().chain(chars).collect()
         }).collect::<Vec<String>>().join(" ")
+    }
+
+    pub fn slugify(string: &str) -> String {
+        let regex = regex::Regex::new(r"[^0-9a-zA-Z:-]+").unwrap();
+        regex.replace_all(&string.to_lowercase(), "-").to_string()
     }
 
 }

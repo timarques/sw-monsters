@@ -1,25 +1,31 @@
 use gtk::prelude::{StyleContextExt, LabelExt, WidgetExt};
+use gtk::Label;
 
-pub trait LabelWidget: LabelExt + WidgetExt {
+impl LabelWidget for gtk::Label {}
 
-    fn text(&self) -> &Self {
-        self.get_style_context().add_class("text");
-        self.set_xalign(0.0);
-        self.set_line_wrap(true);
-        self
+pub trait LabelWidget {
+
+    fn new_text(string: &str) -> Label {
+        let label = Label::new(Some(string));
+        label.get_style_context().add_class("text");
+        label.set_xalign(0.0);
+        label.set_line_wrap(true);
+        label
     }
 
-    fn title(&self) -> &Self {
-        self.get_style_context().add_class("title");
-        self.set_xalign(0.0);
-        self
+    fn new_title(string: &str) -> Label {
+        let label = Label::new(Some(string));
+        label.get_style_context().add_class("title");
+        label.set_xalign(0.0);
+        label
     }
 
-    fn subtitle(&self) -> &Self {
-        self.get_style_context().add_class("subtitle");
-        self.set_xalign(0.0);
-        self.set_line_wrap(true);
-        self
+    fn new_subtitle(string: &str) -> Label {
+        let label = Label::new(Some(string));
+        label.get_style_context().add_class("subtitle");
+        label.set_xalign(0.0);
+        label.set_line_wrap(true);
+        label
     }
 
 }

@@ -9,12 +9,13 @@ pub trait Monster {
         Image::new_from_pixbuf(Some(&pixbuf))
     }
 
-    fn stars(stars: &i8) -> Box {
+    fn stars(stars: i8, spacing: i8) -> Box {
+        use std::convert::TryInto;
         let main_box = Box::new(Orientation::Horizontal, 0);
-        for _ in 0 .. *stars {
+        for _ in 0 .. stars {
             let image = Image::new_from_icon_name(Some("starred-symbolic"), gtk::IconSize::unscaled());
             image.set_pixel_size(10);
-            main_box.pack_start(&image, true, false, 0);
+            main_box.pack_start(&image, true, false, spacing.try_into().unwrap());
         }
         main_box
     }

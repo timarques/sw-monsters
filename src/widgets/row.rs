@@ -1,8 +1,8 @@
 #![allow(dead_code)]
-use gtk::{Label, Widget, Align, Orientation};
+use gtk::{Widget, Align, Orientation};
 use gtk::prelude::{BoxExt, WidgetExt, StyleContextExt};
 use glib::object::Cast;
-use crate::traits::{LabelWidget, BoxWidget};
+use crate::traits::BoxWidget;
 
 pub struct Row {
     image: Option<Widget>,
@@ -24,27 +24,6 @@ impl Row {
 
     pub fn image<A: glib::IsA<Widget>>(mut self, image: &A) -> Self {
         self.image = Some(image.clone().upcast::<Widget>());
-        self
-    }
-
-    pub fn title(mut self, string: &str) -> Self {
-        let label = Label::new(Some(string));
-        label.title();
-        self.childs.push(label.upcast::<Widget>());
-        self
-    }
-
-    pub fn subtitle(mut self, string: &str) -> Self {
-        let label = Label::new(Some(string));
-        label.subtitle();
-        self.childs.push(label.upcast::<Widget>());
-        self
-    }
-
-    pub fn text(mut self, string: &str) -> Self {
-        let label = Label::new(Some(string));
-        label.text();
-        self.childs.push(label.upcast::<Widget>());
         self
     }
 
@@ -92,8 +71,7 @@ impl Row {
             None => wrapper
         };
 
-        let style_context = widget.get_style_context();
-        style_context.add_class("row");
+        widget.get_style_context().add_class("row");
 
         if self.margin {
             widget.set_property_margin(6);

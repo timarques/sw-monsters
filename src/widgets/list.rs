@@ -1,5 +1,3 @@
-#![allow(dead_code)]
-use crate::traits::LabelWidget;
 use gtk::prelude::*;
 use glib::object::IsA;
 use gtk::{
@@ -13,7 +11,7 @@ use gtk::{
     Widget
 };
 
-
+#[derive(Clone)]
 pub struct List {
     label: Label,
     list_box: ListBox,
@@ -23,20 +21,16 @@ pub struct List {
 impl List {
 
     pub fn new() -> Self {
-        let label = Label::new(None);
         let list_box = ListBox::new();
-        label.title();
+        let label = Label::new(None);
+        label.get_style_context().add_class("title");
+        label.set_xalign(0.0);
         label.set_halign(Align::Start);
         Self { label, list_box, border: true}
     }
 
     pub fn without_border(mut self) -> Self {
         self.border = false;
-        self
-    }
-
-    pub fn class(self, class: &str) -> Self {
-        self.list_box.get_style_context().add_class(class);
         self
     }
 
@@ -75,7 +69,7 @@ impl List {
         current.set_header(Some(&Separator::new(Orientation::Vertical)));
     }
 
-    pub fn build(&self) -> gtk::Box {
+    pub fn build(self) -> gtk::Box {
         let box_widget = gtk::Box::new(Orientation::Vertical, 0);
 
         // get_label always returns Some when it should be None

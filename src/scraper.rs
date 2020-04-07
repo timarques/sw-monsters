@@ -1,246 +1,240 @@
-use crate::data_structs::{Monster, Skill, Essence, Collection, Stats, Fusion};
+use crate::data::structs::{Monster, Stats, Skill, Essence};
+use crate::data::structs::collection::Skills;
 use crate::utils::filters;
-use select::{node::{Find, Node}, document::Document};
+use crate::error::Error;
+use crate::traits::IntoResult;
+use select::{node::Node, document::Document};
 use select::predicate::{Name, Class, Attr, Predicate, And, Not};
 
-pub fn get_fusions_monsters(monsters: &Vec<Monster>) -> Result<Vec<Monster>, &'static str> {
-    fn find_monster(monsters: &Vec<Monster>, name: String) -> Monster {
-        monsters.iter().find(|monster| monster.name == name).unwrap().clone()
-    }
-    let response = reqwest::get("https://summonerswarskyarena.info/fusion-hexagram-chart/");
-    if response.is_err() { return Err("connection error"); }
-    let document = Document::from_read(response.unwrap()).unwrap();
-    let charts = document.find(Class("chart-section"));
-    let mut fusions_monsters = Vec::new();
-    for chart in charts {
-        let name = chart.find(Class("name")).next().unwrap().text();
-        let mut nat5_monster = find_monster(monsters, name);
-        let recipe: Vec<Monster> = chart.find(Class("sub")).map(|sub| {
-            let mut names = sub.find(Class("name"));
-            let mut nat4_monster = find_monster(monsters, names.next().unwrap().text());
-            let recipe: Vec<Monster> = names.map(|name| {
-                let mut monster = find_monster(monsters, name.text());
-                monster.fusion = Some(Box::new(Fusion{ used_in: Some(nat4_monster.clone()), recipe: None }));
-                fusions_monsters.push(monster.clone());
-                monster
-            }).collect();
-            nat4_monster.fusion = Some(Box::new(Fusion {
-                used_in: Some(nat5_monster.clone()),
-                recipe: match recipe.is_empty() {
-                    true => None,
-                    false => Some(recipe)
-                }
-            }));
-            fusions_monsters.push(nat4_monster.clone());
-            nat4_monster
-        }).collect();
-        nat5_monster.fusion = Some(Box::new(Fusion{
-            used_in: None,
-            recipe: Some(recipe)
-        }));
-        fusions_monsters.push(nat5_monster);
-    }
-    Ok(fusions_monsters)
-}
+pub fn single(original_monster: &Monster) -> Result<Monster, Error> {
 
-pub fn get_monster(monster: &Monster) -> Result<Monster, &'static str> {
-
-    fn parse_stats<A: Predicate>(mut tables: Find<A>) -> Stats {
-        let table_data = tables.next().unwrap().find(Name("td"));
+    fn parse_stats<'a, A: Iterator<Item = Node<'a>>>(mut tables: A) -> Result<Stats, Error> {
+        let table_data = tables.next().ok()?.find(Name("td"));
         let second_table_data = tables
             .next()
-            .unwrap()
-            .find(Name("tbody").descendant(Name("tr")))
+            .ok()?
+            .find(Name("tbody")
+            .descendant(Name("tr")))
             .last()
-            .unwrap()
+            .ok()?
             .find(Name("td"));
-        let mut data = table_data.chain(second_table_data).map(|data| {
-            filters::only_numbers(
+
+        let mut data = table_data
+            .chain(second_table_data)
+            .map(|data| filters::only_numbers(
                 match data.find(Name("span")).last() {
                     Some(span) => span.text(),
                     None => data.text()
                 }.as_str()
-            )
-        });
-        Stats {
-            speed: data.next().unwrap(),
-            critical_rate: data.next().unwrap(),
-            critical_damage: data.next().unwrap(),
-            resistance: data.next().unwrap(),
-            accuracy: data.next().unwrap(),
-            hp: data.nth(2).unwrap(),
-            attack: data.next().unwrap(),
-            defense: data.next().unwrap()
-        }
+            ));
+        Ok(
+            Stats::builder()
+                .speed(data.next().ok()?)
+                .critical_rate(data.next().ok()?)
+                .critical_damage(data.next().ok()?)
+                .resistance(data.next().ok()?)
+                .accuracy(data.next().ok()?)
+                .health(data.nth(2).ok()?)
+                .attack(data.next().ok()?)
+                .defense(data.next().ok()?)
+                .build()
+        )
     }
 
-    fn parse_skills(skills_division: &Node) -> Vec<Skill> {
 
-        fn filter_effect(effect: &str) -> String {
-            let effect = effect
-            .to_lowercase()
-            .replace("atk", "attack")
-            .replace("def", "defense")
-            .replace("reduce", "decrease")
-            .replace("status_", "")
-            .replace("cri", "critical");
-            match effect.as_str() {
-                "reduce-acc" => "glancing",
-                "attack-bar-up" => "increase-attack-bar",
-                "attack-bar-down" => "decrease-attack-bar",
-                "icon_duration_vampire-50x50" => "vampire",
-                "oblivious" => "oblivion",
-                "blessed" => "recovery",
-                "counterattack" => "counter",
-                _ => effect.as_str()
-            }.to_string()
-        }
 
-        skills_division.find(Class("skill")).map(|skill_node| {
-            let image = skill_node.find(Name("img")).next().unwrap().attr("src").unwrap().to_string();
-            let name = skill_node.find(Class("skill-title")).next().unwrap().text();
-            let description = skill_node.find(Class("description")).next().unwrap().text();
-            let multiplier_element = skill_node.find(Class("multiplier")).next();
-            let multiplier = multiplier_element.map(|element| element.text().replace("Multiplier: ", ""));
-            let effects = skill_node
+    fn parse_skills<'a>(skills_division: &Node<'a>) -> Result<Vec<Skill>, Error> {
+
+        skills_division.find(Class("skill")).map(|node| {
+            let image = node
+                .find(Name("img"))
+                .next()
+                .ok()?
+                .attr("src")
+                .unwrap()
+                .to_string();
+            let name = node
+                .find(Class("skill-title"))
+                .next()
+                .ok()?
+                .text();
+            let description = node
+                .find(Class("description"))
+                .next()
+                .ok()?
+                .text();
+            let multiplier = node
+                .find(Class("multiplier"))
+                .next()
+                .map(|element| element.text().replace("Multiplier: ", ""));
+            let effects: Option<Vec<String>> = node
                 .find(Class("buff-debuffs"))
                 .next()
-                .map(|element| element.find(Name("span")).map(|effect| {
-                    filter_effect(
-                        effect
-                       .attr("style")
-                       .unwrap()
-                       .split("/")
-                       .last()
-                       .unwrap()
-                       .split(".")
-                       .next()
-                       .unwrap()
-                   )
-               }).collect());
-            let skillups = skill_node
+                .and_then(|node| {
+                    node.find(Name("span")).map(|node| {
+                        node
+                        .attr("style")
+                        .and_then(|string| string.split("/").last())
+                        .and_then(|string| string.split(".").next())
+                        .map(|string| {
+                            let effect = string
+                                .to_lowercase()
+                                .replace("atk", "attack")
+                                .replace("def", "defense")
+                                .replace("reduce", "decrease")
+                                .replace("status_", "")
+                                .replace("cri", "critical");
+                            match effect.as_str() {
+                                "reduce-acc" => "glancing",
+                                "attack-bar-up" => "increase-attack-bar",
+                                "attack-bar-down" => "decrease-attack-bar",
+                                "icon_duration_vampire-50x50" => "vampire",
+                                "oblivious" => "oblivion",
+                                "blessed" => "recovery",
+                                "counterattack" => "counter",
+                            _ => effect.as_str()
+                            }.to_string()
+                        })
+                    }).collect()
+                });
+            let skillups = node
                 .find(Class("level-data").descendant(Name("p")))
                 .next()
                 .map(|element| element.text().split("\n").map(|s|s.to_string()).collect());
-            Skill {
+
+            Ok(Skill::new(
                 name,
-                image,
                 description,
                 multiplier,
+                image,
                 skillups,
                 effects
-            }
+            ))
         }).collect()
     }
 
-    let response = reqwest::get(&monster.source);
-    if response.is_err() { return Err("connection error"); }
-    let document = Document::from_read(response.unwrap()).unwrap();
-    let article = document.find(Class("monster-page")).next().unwrap();
-    let content = article.find(Class("content")).next().unwrap();
-    let mut monster = monster.clone();
-    monster.r#type = Some(filters::capitalize(
-            &article
-            .find(Class("stars")
-            .descendant(Name("span")))
-            .next()
-            .unwrap()
-            .text()
-            .to_lowercase()
-        )
-    );
-    monster.essences = content.find(Class("essences").descendant(Name("span"))).map(|essence| {
-        let text = essence.text();
-        let mut split = text.split(" ");
-        let quantity = filters::only_numbers(split.next().unwrap()) as i8;
-        let r#type = split.nth(2).unwrap().to_lowercase();
-        let level = split.last().unwrap().to_lowercase();
-        let level = filters::only_letters(&level).to_string();
-        Essence {
-            r#type,
-            level,
-            quantity
-        }
-    }).collect();
-    let mut second_awaken_monster = monster.clone();
+    let response = reqwest::get(&original_monster.source);
+    let document = Document::from_read(response?)?;
+    let article = document.find(Class("monster-page")).next().ok()?;
+    let content = article.find(Class("content")).next().ok()?;
+
     let mut stats_divisions = content.find(And(And(Class("wrapper"), Class("text-center")), Not(Class("portrait-container"))));
-    let skills_divisions = content.find(And(Class("wrapper"), Class("skills")));
+    let mut second_awakening_skills: Option<Vec<Skill>> = None;
 
-    monster.stats = Some(parse_stats(
-        stats_divisions
+    let mut monster = original_monster.clone();
+
+    let monster_type = article
+        .find(Class("stars").descendant(Name("span")))
         .next()
-        .unwrap()
-        .find(Class("stats-right").descendant(Name("table")))
-    ));
+        .map(|element| filters::capitalize(&element.text().to_lowercase()))
+        .ok()?;
 
-    let skills_divisions_vec: Vec<_> = skills_divisions.collect();
-    let (last_skill_division, skills_divisions) = skills_divisions_vec.split_last().unwrap();
-    let second_awakening_skills: Vec<Skill> = parse_skills(last_skill_division);
+    let stats = stats_divisions
+        .next()
+        .and_then(|element| {
+            let tables = element.find(Class("stats-right").descendant(Name("table")));
+            parse_stats(tables).ok()
+        })
+        .ok()?;
 
-    if !second_awakening_skills.is_empty() {
-        second_awaken_monster.skills = vec![
-            Collection {
-                r#type: String::from("Skills"),
-                elements: second_awakening_skills
+    let essences = content
+        .find(Class("essences").descendant(Name("span")))
+        .map(|node| {
+            let text = node.text();
+            let mut split = text.split(" ");
+            let raw_quantity = split.next().ok()?.clone();
+            let essence_type = split.nth(2).ok()?.to_lowercase();
+            let raw_level = split.last().ok()?.to_lowercase();
+            let essence_level = filters::only_letters(&raw_level).to_string();
+            let essence_quantity = filters::only_numbers(&raw_quantity) as i8;
+            Ok(Essence::new(essence_type, essence_level, essence_quantity))
+        })
+        .collect::<Result<Vec<_>, Error>>()?;
+
+    let sections_name = content
+        .find(Name("h2"))
+        .filter_map(|node| {
+            let text = node.text();
+            match text.to_lowercase().contains("skills") {
+                true => Some(text.replace(&format!("{} ", original_monster.name), "")),
+                false => None
             }
-        ];
-        second_awaken_monster.stats = Some(parse_stats(stats_divisions.next().unwrap().find(Name("table"))));
-        second_awaken_monster.family = format!("{} Second Awakening", second_awaken_monster.family);
-        second_awaken_monster.image = document
+        });
+
+    let skills = content
+        .find(And(Class("wrapper"), Class("skills")))
+        .filter_map(|node| {
+            let title = sections_name.next().ok();
+            if title.is_err() { return title.err().map(|error| Err(error)); }
+            let title = title.unwrap();
+
+            let skills = parse_skills(&node);
+            if skills.is_err() { return skills.err().map(|error| Err(error)); }
+            let skills = skills.unwrap();
+
+            if title == "SECOND AWAKENING SKILLS" {
+                second_awakening_skills = Some(skills);
+                return None;
+            }
+
+            Some(Ok(Skills::new(title, Some(skills))))
+        })
+        .collect::<Result<Vec<_>, Error>>()?;
+
+    if let Some(skills) = second_awakening_skills {
+        let image = document
             .find(Class("monster-images").descendant(Name("img")))
             .nth(2)
-            .unwrap()
-            .attr("src")
-            .unwrap()
-            .to_string();
-        monster.second_awakening = Some(Box::new(second_awaken_monster));
+            .map(|element| element.attr("src").unwrap().to_string())
+            .ok()?;
+
+        let stats = stats_divisions
+            .next()
+            .and_then(|element| parse_stats(element.find(Name("table"))).ok())
+            .ok()?;
+
+        monster.set_second_awakening(Monster::second_awakening(&monster, image, stats, skills));
     }
 
-    for division in skills_divisions {
-        let skills: Vec<Skill> = parse_skills(division);
-        if skills.is_empty() { continue; }
-        monster.skills.push(Collection {
-            elements: skills,
-            r#type: match division.prev().unwrap().text().contains("Transformed") {
-                true => "Transformed Skills",
-                false => "Skills"
-            }.to_string()
-        });
-    };
+    monster.set_skills(skills);
+    monster.set_essences(essences);
+    monster.set_stats(stats);
+    monster.set_type(monster_type);
+
     Ok(monster)
 }
 
 
 
-pub fn get_monsters() -> Result<Vec<Monster>, &'static str> {
+pub fn all() -> Result<Vec<Monster>, Error> {
     let response = reqwest::get("https://summonerswarskyarena.info/monster-list/");
-    if response.is_err() { return Err("connection error"); }
-    let document = Document::from_read(response.unwrap()).unwrap();
+    let document = Document::from_read(response?)?;
     let rows = document.find(Attr("id", "monster-list").descendant(Class("searchable")));
-    Ok(rows.map(|row| {
+
+    rows.map(|row| {
         let mut td = row.find(Name("td"));
-        let source = row.attr("data-link").unwrap().to_string();
-        let element = row.attr("data-element").unwrap().to_string();
-        let stars_text = td.next().unwrap().find(Name("span")).next().unwrap().text();
-        let stars = stars_text.trim().parse::<i8>().unwrap();
+        let source = row.attr("data-link").ok()?.to_string();
+        let element = row.attr("data-element").ok()?.to_string();
+        let stars_text = td.next().unwrap().find(Name("span")).next().ok()?.text();
+        let stars = stars_text.trim().parse::<i8>()?;
         td.next();
-        let family = td.next().unwrap().find(Name("h3")).next().unwrap().text();
-        let image = td.next().unwrap().find(Name("img")).next().unwrap().attr("data-src").unwrap().to_string();
+        let family = td
+            .next()
+            .ok()?
+            .find(Name("h3"))
+            .next()
+            .ok()?
+            .text();
+        let image = td
+            .next()
+            .ok()?
+            .find(Name("img"))
+            .next()
+            .ok()?
+            .attr("data-src")
+            .ok()?
+            .to_string();
         let name = td.next().unwrap().text();
-        Monster {
-            name,
-            element,
-            stars,
-            image,
-            source,
-            family,
-            r#type: None,
-            essences: Vec::new(),
-            skills: Vec::new(),
-            fusion: None,
-            second_awakening: None,
-            stats: None,
-            family_elements: None
-        }
-    }).collect())
+        Ok(Monster::new(name, image, stars, element, family, source))
+    }).collect()
 }

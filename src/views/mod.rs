@@ -1,52 +1,40 @@
-mod collection;
+mod list;
 mod single;
-mod loading;
-mod search;
-mod fusions;
+mod collection;
 
+use crate::traits::SpinnerWidget;
+use gtk::StackExt;
+
+#[derive(Clone)]
 pub struct Views {
-    pub collection: collection::Collection,
+    pub list: list::List,
     pub single: single::Single,
-    pub loading: loading::Loading,
-    pub search: search::Search,
-    pub fusions: fusions::Fusions,
-    pub stack: gtk::Stack,
-    pub views_stack: gtk::Stack
+    pub loading: gtk::Spinner,
+    pub collection: collection::Collection,
+    pub stack: gtk::Stack
 }
 
 impl Views {
-    pub fn new(sender: &glib::Sender<crate::action::Action>)-> Self {
+    pub fn new()-> Self {
         let stack = gtk::Stack::new();
-        let views_stack = gtk::Stack::new();
 
-        let single = single::Single::new(&sender);
-        let collection = collection::Collection::new(&sender);
-        let loading = loading::Loading::new();
-        let search = search::Search::new(&sender);
-        let fusions = fusions::Fusions::new(&sender);
+        let single = single::Single::new();
+        let list = list::List::new();
+        let collection = collection::Collection::new();
+        let loading = gtk::Spinner::new_loading();
 
-        let views = Self {
-            collection,
+        stack.set_transition_type(gtk::StackTransitionType::SlideLeft);
+        stack.add_named(&loading, "loading");
+        stack.add_named(&collection.container, "collection");
+        stack.add_named(&list.container, "list");
+        stack.add_named(&single.container, "single");
+
+        Self {
+            list,
             single,
             loading,
-            search,
-            fusions,
-            stack,
-            views_stack
-        };
-        views.init();
-        views
-    }
-
-    fn init(&self) {
-        use gtk::StackExt;
-        self.stack.set_transition_type(gtk::StackTransitionType::SlideLeft);
-        self.views_stack.set_transition_type(gtk::StackTransitionType::SlideLeft);
-        self.stack.add_named(&self.views_stack, "views");
-        self.stack.add_named(&self.single.container.get(), "single");
-        self.stack.add_named(&self.loading.container, "loading");
-        self.stack.add_named(&self.search.container.get(), "search");
-        self.views_stack.add_titled(&self.collection.container.get(), "collection", "Collection");
-        self.views_stack.add_titled(&self.fusions.container.get(), "fusions", "Fusions");
+            collection,
+            stack
+        }
     }
 }
